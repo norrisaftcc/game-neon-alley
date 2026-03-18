@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MazeBuilder Streamlit UI Mockup</title>
+    <style>
+        :root {
+            --midnight-blue: #191970;
+            --parchment: #E8DCCA;
+            --arcane-purple: #9370DB;
+            --magic-amber: #FFD700;
+            --ivory: #FFFFF0;
+            --dark-brown: #4A3C31;
+        }
+
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: var(--midnight-blue);
+            color: var(--ivory);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            border: 3px solid var(--magic-amber);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            background-image: 
+                linear-gradient(rgba(25, 25, 112, 0.9), rgba(25, 25, 112, 0.9)),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" opacity="0.1"><rect width="200" height="200" fill="none" stroke="%23FFD700" stroke-width="2"/><circle cx="100" cy="100" r="50" fill="none" stroke="%23FFD700" stroke-width="2"/><path d="M50,50 L150,150 M150,50 L50,150" stroke="%23FFD700" stroke-width="2"/></svg>');
+        }
+
+        h1 {
+            font-family: "Luminari", fantasy, serif;
+            color: var(--magic-amber);
+            text-align: center;
+            text-shadow: 2px 2px 4px #000000;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            font-size: 2.5em;
+        }
+
+        h2 {
+            font-family: "Luminari", fantasy, serif;
+            color: var(--arcane-purple);
+            border-bottom: 1px solid var(--magic-amber);
+            padding-bottom: 5px;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .nav-button {
+            background-color: var(--arcane-purple);
+            color: var(--ivory);
+            border: 2px solid var(--magic-amber);
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-family: 'Luminari', fantasy;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-button:hover {
+            background-color: var(--magic-amber);
+            color: var(--midnight-blue);
+        }
+
+        .main-content {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .maze-container {
+            flex: 2;
+            background-color: rgba(232, 220, 202, 0.1);
+            border: 2px solid var(--magic-amber);
+            border-radius: 5px;
+            padding: 10px;
+            height: 600px;
+            margin-right: 20px;
+            position: relative;
+        }
+
+        .controls-container {
+            flex: 1;
+            background-color: var(--parchment);
+            color: var(--dark-brown);
+            border-radius: 5px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--midnight-blue);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--arcane-purple);
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--dark-brown);
+            font-family: inherit;
+        }
+
+        .cast-button {
+            background-color: var(--arcane-purple);
+            color: var(--ivory);
+            border: none;
+            border-radius: 5px;
+            padding: 12px;
+            font-family: 'Luminari', fantasy;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: auto;
+            transition: all 0.3s;
+        }
+
+        .cast-button:hover {
+            background-color: var(--magic-amber);
+            color: var(--midnight-blue);
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            background-color: rgba(232, 220, 202, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .map-area {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            height: 100%;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.7em;
+        }
+
+        .cell {
+            border: 1px solid rgba(147, 112, 219, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .cell.path {
+            background-color: rgba(147, 112, 219, 0.3);
+            color: var(--magic-amber);
+        }
+
+        .cell.entrance {
+            background-color: rgba(255, 215, 0, 0.5);
+            color: var(--midnight-blue);
+            font-weight: bold;
+        }
+
+        .cell.exit {
+            background-color: rgba(255, 215, 0, 0.8);
+            color: var(--midnight-blue);
+            font-weight: bold;
+        }
+
+        .wall-top, .wall-right, .wall-bottom, .wall-left {
+            position: absolute;
+            background-color: var(--magic-amber);
+        }
+
+        .wall-top {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .wall-right {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 2px;
+        }
+
+        .wall-bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+        }
+
+        .wall-left {
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 2px;
+        }
+
+        .no-wall {
+            background-color: transparent !important;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MAZEBUILDER: THE DIGITAL GRIMOIRE</h1>
+        
+        <div class="navigation">
+            <button class="nav-button">THE ATRIUM</button>
+            <button class="nav-button" style="background-color: var(--magic-amber); color: var(--midnight-blue);">THE CONSTRUCTOR'S WORKSHOP</button>
+            <button class="nav-button">THE EXPLORER'S CHART</button>
+            <button class="nav-button">THE ARCHIVIST'S TOME</button>
+        </div>
+        
+        <div class="main-content">
+            <div class="maze-container">
+                <div class="map-area">
+                    <!-- Generate maze cells with JavaScript -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const mapArea = document.querySelector('.map-area');
+                            
+                            // Create a 15x15 grid
+                            for (let r = 0; r < 15; r++) {
+                                for (let c = 0; c < 15; c++) {
+                                    const cell = document.createElement('div');
+                                    cell.className = 'cell';
+                                    
+                                    // Add walls
+                                    const wallTop = document.createElement('div');
+                                    wallTop.className = 'wall-top';
+                                    
+                                    const wallRight = document.createElement('div');
+                                    wallRight.className = 'wall-right';
+                                    
+                                    const wallBottom = document.createElement('div');
+                                    wallBottom.className = 'wall-bottom';
+                                    
+                                    const wallLeft = document.createElement('div');
+                                    wallLeft.className = 'wall-left';
+                                    
+                                    // Randomly remove some walls to create a maze-like pattern
+                                    if (Math.random() > 0.7) wallTop.classList.add('no-wall');
+                                    if (Math.random() > 0.7) wallRight.classList.add('no-wall');
+                                    if (Math.random() > 0.7) wallBottom.classList.add('no-wall');
+                                    if (Math.random() > 0.7) wallLeft.classList.add('no-wall');
+                                    
+                                    cell.appendChild(wallTop);
+                                    cell.appendChild(wallRight);
+                                    cell.appendChild(wallBottom);
+                                    cell.appendChild(wallLeft);
+                                    
+                                    // Mark a solution path
+                                    if ((r === 14 && c === 0) || 
+                                        (r === 0 && c === 14) ||
+                                        (r > 10 && c < 4) ||
+                                        (r > 7 && r < 11 && c < 8) ||
+                                        (r > 3 && r < 8 && c > 4 && c < 12) ||
+                                        (r < 4 && c > 8)) {
+                                        cell.classList.add('path');
+                                        
+                                        // Add distance numbers to path cells
+                                        const distance = 14 - r + c;
+                                        cell.textContent = distance;
+                                    }
+                                    
+                                    // Add entrance and exit
+                                    if (r === 14 && c === 0) {
+                                        cell.classList.add('entrance');
+                                        cell.textContent = 'E';
+                                    }
+                                    if (r === 0 && c === 14) {
+                                        cell.classList.add('exit');
+                                        cell.textContent = 'X';
+                                    }
+                                    
+                                    mapArea.appendChild(cell);
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+            
+            <div class="controls-container">
+                <h2>MAZE GRIMOIRE</h2>
+                
+                <div class="control-group">
+                    <label class="control-label">Algorithm:</label>
+                    <select>
+                        <option>The Northeasterly Wind (Binary Tree)</option>
+                        <option>The Serpent's Path (Sidewinder)</option>
+                        <option selected>The Wanderer's Weave (Aldous-Broder)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Dimensions:</label>
+                    <select>
+                        <option>Small Scroll (10x10)</option>
+                        <option selected>Medium Tome (15x15)</option>
+                        <option>Large Grimoire (20x20)</option>
+                        <option>Custom Dimensions...</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Mystical Seed:</label>
+                    <input type="text" placeholder="Enter a seed value for reproducible results" value="1427">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Arcane Properties:</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="checkbox" id="show-solution" checked>
+                        <label for="show-solution">Reveal the Path</label>
+                    </div>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <input type="checkbox" id="show-distances" checked>
+                        <label for="show-distances">Show Arcane Distances</label>
+                    </div>
+                </div>
+                
+                <button class="cast-button">CAST THE SPELL</button>
+            </div>
+        </div>
+        
+        <div class="action-bar">
+            <button class="nav-button">First Person View</button>
+            <button class="nav-button">Save This Design</button>
+            <button class="nav-button">Export as Image</button>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat">
+                <div>Distance from Entrance</div>
+                <div>0</div>
+            </div>
+            <div class="stat">
+                <div>Path Length</div>
+                <div>28</div>
+            </div>
+            <div class="stat">
+                <div>Current Position</div>
+                <div>(14,0)</div>
+            </div>
+            <div class="stat">
+                <div>Steps to Exit</div>
+                <div>27</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Created with the MazeBuilder Python Library • The Digital Grimoire Interface • May 2025
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MazeBuilder Project Presentation</title>
+    <link rel="stylesheet" href="css/presentation.css">
+</head>
+<body>
+    <div class="presentation-container">
+        <header>
+            <h1>MazeBuilder: Maze Generation Project</h1>
+            <div class="theme-switcher">
+                <button class="theme-btn active" data-theme="default">Wizardry</button>
+                <button class="theme-btn" data-theme="retro">Retro</button>
+                <button class="theme-btn" data-theme="light">Light</button>
+            </div>
+        </header>
+
+        <!-- Slide 1: Introduction -->
+        <div class="slide active" id="slide1">
+            <div class="slide-content">
+                <h2>MazeBuilder: A Maze Generation Library</h2>
+                <p class="wizard-quote">"In the labyrinth of code, we conjure paths unseen..." — The Digital Grimoire</p>
+                
+                <div class="wizardry-border">
+                    <p>MazeBuilder is a multi-language project for maze generation, visualization, and pathfinding. Originally a C# port of algorithms from Jamis Buck's "Mazes for Programmers," it has expanded to Python and C++ implementations with modern, modular architecture.</p>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Project Goals</h3>
+                        <ul>
+                            <li>Implement multiple maze generation algorithms</li>
+                            <li>Provide efficient pathfinding solutions</li>
+                            <li>Create compelling visual representations</li>
+                            <li>Support multiple UI paradigms</li>
+                            <li>Improve performance for large mazes</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <img src="images/maze_binary_wizardry.png" alt="Maze generated with Binary Tree algorithm">
+                        <p><em>A maze generated with the Binary Tree algorithm using the Wizardry theme</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Core Algorithms -->
+        <div class="slide" id="slide2">
+            <div class="slide-content">
+                <h2>Core Maze Generation Algorithms</h2>
+                
+                <div class="feature-card">
+                    <h3>Binary Tree Algorithm</h3>
+                    <p>A simple algorithm that creates mazes with a bias toward the northeast corner. For each cell, it randomly connects either northward or eastward, creating a pattern that resembles a binary tree structure.</p>
+                    <p><strong>Characteristics:</strong> Fast, biased, distinct diagonal textures</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Sidewinder Algorithm</h3>
+                    <p>Creates east-west passages (runs) that connect northward at random intervals. This algorithm maintains a perfect northern passage and creates a more varied maze compared to Binary Tree.</p>
+                    <p><strong>Characteristics:</strong> Balanced, distinct horizontal bias, perfect northern edge</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Aldous-Broder Algorithm</h3>
+                    <p>Uses random walks to create unbiased perfect mazes. The algorithm visits cells randomly, only creating passages to unvisited cells, until all cells have been visited.</p>
+                    <p><strong>Characteristics:</strong> Unbiased, slower performance, truly random patterns</p>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Implementation Languages</h3>
+                        <ul>
+                            <li>Original C# implementation</li>
+                            <li>Python port with enhanced features</li>
+                            <li>C++ port focused on performance</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Key Concepts</h3>
+                        <ul>
+                            <li>Grid-based maze representation</li>
+                            <li>Cell connectivity via linked directions</li>
+                            <li>Algorithmic generation approaches</li>
+                            <li>Perfect mazes (exactly one path between any two points)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Pathfinding -->
+        <div class="slide" id="slide3">
+            <div class="slide-content">
+                <h2>Pathfinding: Finding Your Way Through the Maze</h2>
+                
+                <div class="wizardry-border">
+                    <p>Pathfinding algorithms are used to find routes through the generated mazes, enabling applications from simple maze solving to more complex routing problems.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Dijkstra's Algorithm</h3>
+                    <p>A greedy algorithm that always expands the node with the smallest known distance from the start. It finds the shortest path from a starting point to all other cells in the maze.</p>
+                    <div class="code-container">
+                        <code>
+# Simplified Dijkstra's Algorithm
+def shortest_path(grid, start, end):
+    # Calculate distances from start
+    distances = calculate_distances(grid, start)
+    
+    # If end is unreachable, return empty path
+    if distances.get_distance(end) == sys.maxsize:
+        return []
+    
+    # Reconstruct path from end to start
+    path = []
+    current = end
+    path.append(current)
+    
+    # Walk backward from end to start
+    while current != start:
+        next_cell = find_neighbor_closest_to_start(current, distances)
+        path.append(next_cell)
+        current = next_cell
+    
+    # Reverse to get path from start to end
+    path.reverse()
+    return path</code>
+                    </div>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Current Implementations</h3>
+                        <ul>
+                            <li>Dijkstra's Algorithm in Python and C++</li>
+                            <li>Distance calculation with priority queue</li>
+                            <li>Path reconstruction from distance map</li>
+                            <li>Longest path finder for maximum challenge</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Upcoming in Sprint 3</h3>
+                        <ul>
+                            <li>A* Pathfinding algorithm in C++</li>
+                            <li>Performance optimizations for large mazes</li>
+                            <li>Heuristic tuning for specific maze types</li>
+                            <li>Path animation and visualization improvements</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Visualization Layer -->
+        <div class="slide" id="slide4">
+            <div class="slide-content">
+                <h2>The Visualization Layer: Our Latest Addition</h2>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Architecture Overview</h3>
+                        <p>A key contribution of our recent work is the dedicated visualization layer that separates rendering logic from maze algorithms. This modular approach enables multiple rendering strategies while maintaining a common interface.</p>
+                        
+                        <div class="feature-card">
+                            <h3>Key Components</h3>
+                            <ul>
+                                <li><strong>MazeRendererBase</strong>: Abstract base class defining the interface</li>
+                                <li><strong>ThemeManager</strong>: Centralized theme registry and management</li>
+                                <li><strong>Multiple Renderers</strong>: Text, Matplotlib, and Asciimatics</li>
+                                <li><strong>Theme System</strong>: Wizardry, Retro, and Default themes</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h3>Available Renderers</h3>
+                        <div class="feature-card">
+                            <h4>TextRenderer</h4>
+                            <p>ASCII/ANSI text-based rendering for terminal output with colorized paths and cells.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>MatplotlibRenderer</h4>
+                            <p>Graphical rendering using matplotlib for GUI applications and image export.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4>AsciimaticsRenderer</h4>
+                            <p>Interactive terminal-based visualization with keyboard navigation.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Visual Themes</h3>
+                <div class="two-column">
+                    <div class="column">
+                        <img src="images/maze_binary_wizardry.png" alt="Wizardry Theme" style="max-height: 200px;">
+                        <p><em>Wizardry Theme</em></p>
+                    </div>
+                    <div class="column">
+                        <img src="images/maze_binary_retro.png" alt="Retro Theme" style="max-height: 200px;">
+                        <p><em>Retro Terminal Theme</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Code Architecture -->
+        <div class="slide" id="slide5">
+            <div class="slide-content">
+                <h2>Code Architecture Deep Dive</h2>
+                
+                <div class="wizardry-border">
+                    <p>The visualization layer follows object-oriented design principles with a focus on extensibility and separation of concerns.</p>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Renderer Base Class</h3>
+                        <div class="code-container">
+                            <code>
+class MazeRendererBase:
+    """Base class for all maze renderers."""
+    
+    def __init__(self, theme_name=None):
+        """Initialize with optional theme."""
+        self.theme_name = theme_name or "default"
+    
+    def render_maze(self, grid, solution_path=None, 
+                   show_distances=False, **kwargs):
+        """Render a maze with optional path and distances."""
+        raise NotImplementedError("Subclasses must implement")
+    
+    def get_entrance_exit(self, grid):
+        """Get standard entrance (bottom left) and exit (top right)."""
+        entrance = grid.at(grid.rows - 1, 0)
+        exit = grid.at(0, grid.cols - 1)
+        return entrance, exit</code>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h3>Theme System</h3>
+                        <div class="code-container">
+                            <code>
+class ThemeManager:
+    """Central registry for theme management."""
+    
+    # Available themes
+    _themes = {
+        "default": MazeTheme,
+        "wizardry": WizardryTheme,
+        "retro": RetroTheme
+    }
+    
+    @classmethod
+    def get_theme(cls, theme_name="default"):
+        """Get a theme instance by name."""
+        if theme_name not in cls._themes:
+            raise ValueError(f"Unknown theme: {theme_name}")
+        return cls._themes[theme_name]()
+    
+    @classmethod
+    def register_theme(cls, theme_name, theme_class):
+        """Register a new theme."""
+        cls._themes[theme_name] = theme_class</code>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Visualization Layer Benefits</h3>
+                <div class="feature-card">
+                    <ul>
+                        <li><strong>Separation of Concerns</strong>: Rendering logic decoupled from algorithms</li>
+                        <li><strong>Reduced Duplication</strong>: Common visualization code centralized</li>
+                        <li><strong>Extensibility</strong>: Easy to add new renderers and themes</li>
+                        <li><strong>Consistent Interface</strong>: All renderers follow the same pattern</li>
+                        <li><strong>Theme Support</strong>: Visual styling separated from rendering logic</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Interactive Features -->
+        <div class="slide" id="slide6">
+            <div class="slide-content">
+                <h2>Interactive Maze Exploration</h2>
+                
+                <h3>AsciimaticsRenderer: Interactive Terminal Interface</h3>
+                <div class="wizardry-border">
+                    <p>The newly added AsciimaticsRenderer provides a full-screen terminal interface for interactive maze exploration. Users can navigate through the maze using keyboard controls, toggle solution visibility, and receive help and status information.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Key Features</h3>
+                    <ul>
+                        <li><strong>Keyboard Navigation</strong>: Arrow keys to move through the maze</li>
+                        <li><strong>Solution Toggle</strong>: Press 's' to show/hide the solution path</li>
+                        <li><strong>Distance Display</strong>: Shows cell distance from exit</li>
+                        <li><strong>Multiple Themes</strong>: Wizardry and Retro terminal styles</li>
+                        <li><strong>Help System</strong>: Press 'h' for help information</li>
+                    </ul>
+                </div>
+                
+                <div class="code-container">
+                    <code>
+# How to use the interactive maze explorer:
+python interactive_maze.py --rows 15 --cols 15 --theme retro
+
+# Or with the unified interface:
+python run_maze.py --renderer asciimatics --theme wizardry</code>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>User Interface</h3>
+                        <ul>
+                            <li>Full-screen terminal display</li>
+                            <li>Visual indication of current position</li>
+                            <li>Status information</li>
+                            <li>Help overlay</li>
+                            <li>Theme-appropriate styling</li>
+                        </ul>
+                    </div>
+                    <div class="column">
+                        <h3>Technical Implementation</h3>
+                        <ul>
+                            <li>Asciimatics library for terminal control</li>
+                            <li>Event-based keyboard handling</li>
+                            <li>Custom theme-to-screen color mapping</li>
+                            <li>Wall and path collision detection</li>
+                            <li>Screen size adaptation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: User Interfaces -->
+        <div class="slide" id="slide7">
+            <div class="slide-content">
+                <h2>Multiple User Interfaces</h2>
+                
+                <div class="feature-card">
+                    <h3>Command-Line Interface</h3>
+                    <p>The Python port includes several command-line interfaces for different use cases:</p>
+                    <div class="code-container">
+                        <code>
+# Basic CLI for maze generation and display
+python main.py --rows 15 --cols 15 --algorithm sidewinder --theme retro
+
+# Interactive maze explorer
+python interactive_maze.py --rows 12 --cols 12 --theme wizardry
+
+# Unified interface for all functionality
+python run_maze.py --renderer matplotlib --theme default --save maze.png
+
+# Demo of different renderers
+python static_maze_demo.py --theme retro</code>
+                    </div>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Streamlit Web Interface</h3>
+                    <p>A web-based UI built with Streamlit, featuring:</p>
+                    <ul>
+                        <li>Real-time maze generation</li>
+                        <li>Algorithm selection</li>
+                        <li>Parameter adjustments</li>
+                        <li>Solution visualization</li>
+                        <li>Themed interface matching maze styling</li>
+                    </ul>
+                </div>
+                
+                <h3>Future UI Plans (Sprint 3)</h3>
+                <div class="two-column">
+                    <div class="column">
+                        <div class="feature-card">
+                            <h4>Enhanced Streamlit UI</h4>
+                            <ul>
+                                <li>Interactive maze solving</li>
+                                <li>Real-time navigation</li>
+                                <li>Algorithm visualization</li>
+                                <li>Performance metrics</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="feature-card">
+                            <h4>3D Visualization</h4>
+                            <ul>
+                                <li>First-person exploration</li>
+                                <li>3D rendering of mazes</li>
+                                <li>Immersive environment</li>
+                                <li>Flyover views</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Project Status and Roadmap -->
+        <div class="slide" id="slide8">
+            <div class="slide-content">
+                <h2>Project Status and Roadmap</h2>
+                
+                <div class="feature-card">
+                    <h3>Completed in Sprint 2 (May 2025)</h3>
+                    <ul>
+                        <li>Improved visualization with a modular architecture</li>
+                        <li>Created a dedicated visualization layer with multiple renderers</li>
+                        <li>Implemented interactive terminal-based maze navigation</li>
+                        <li>Added theme support with "Wizardry" and "Retro Terminal" styles</li>
+                        <li>Created unified command-line interfaces</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <h3>Sprint 3 Priorities (June 2025)</h3>
+                    <ul>
+                        <li>Add A* pathfinding algorithm to C++ version</li>
+                        <li>Improve performance for large mazes</li>
+                        <li>Enhance the Streamlit UI with interactive maze solving</li>
+                        <li>Add 3D visualization options</li>
+                        <li>Expand test coverage for edge cases</li>
+                    </ul>
+                </div>
+                
+                <div class="two-column">
+                    <div class="column">
+                        <h3>Long-Term Vision</h3>
+                        <div class="wizardry-border">
+                            <ul>
+                                <li>Additional maze generation algorithms</li>
+                                <li>Support for 3D mazes and complex structures</li>
+                                <li>Machine learning integration for maze analysis</li>
+                                <li>Shared maze repository and community features</li>
+                                <li>Real-time collaborative maze solving</li>
+                                <li>Game development toolkit integration</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <h3>Key Metrics</h3>
+                        <div class="wizardry-border">
+                            <ul>
+                                <li><strong>Algorithms:</strong> 3 maze generation, 1 pathfinding</li>
+                                <li><strong>Languages:</strong> C#, Python, C++</li>
+                                <li><strong>Renderers:</strong> 3 (Text, Matplotlib, Asciimatics)</li>
+                                <li><strong>Themes:</strong> 3 (Default, Wizardry, Retro)</li>
+                                <li><strong>UIs:</strong> CLI, Interactive Terminal, Web</li>
+                                <li><strong>Max Tested Size:</strong> 100x100 maze</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation controls -->
+        <div class="navigation">
+            <button id="prev-slide" class="nav-btn">Previous</button>
+            <div class="slide-indicators"></div>
+            <button id="next-slide" class="nav-btn">Next</button>
+        </div>
+    </div>
+
+    <script src="js/presentation.js"></script>
+</body>
+</html>
