@@ -1,0 +1,5 @@
+Repair Kit|heal|20
+EMP Grenade|damage|25
+Shield Booster|shield|15
+Battery Cell|battery|3
+Smoke Bomb|escape|0
