@@ -1,0 +1,8 @@
+[
+  { "type": "enemy", "enemy": 0, "text": "Red sensor lights flicker as a Sentry Bot rolls out of the steam." },
+  { "type": "loot", "loot": 2, "text": "A smashed vending machine sparks beside a Shield Booster." },
+  { "type": "event", "stat": "battery", "value": 2, "text": "You salvage fresh charge from a dead courier drone." },
+  { "type": "enemy", "enemy": 2, "text": "A Junkyard Drone lunges from a pile of wet chrome." },
+  { "type": "loot", "loot": 4, "text": "A street runner dropped a Smoke Bomb near the curb." },
+  { "type": "finish", "text": "The data drop terminal glows at the dead end of the alley." }
+]
