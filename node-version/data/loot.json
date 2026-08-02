@@ -1,0 +1,7 @@
+[
+  { "name": "Repair Kit", "type": "heal", "value": 20 },
+  { "name": "EMP Grenade", "type": "damage", "value": 25 },
+  { "name": "Shield Booster", "type": "shield", "value": 12 },
+  { "name": "Battery Cell", "type": "battery", "value": 3 },
+  { "name": "Smoke Bomb", "type": "escape", "value": 0 }
+]

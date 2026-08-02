@@ -1,0 +1,5 @@
+[
+  { "name": "Sentry Bot", "hp": 30, "damage": 8 },
+  { "name": "Street Samurai", "hp": 45, "damage": 12 },
+  { "name": "Junkyard Drone", "hp": 20, "damage": 5 }
+]
