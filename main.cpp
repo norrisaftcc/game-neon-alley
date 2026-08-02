@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include <string>
 #include <cstdlib>
 #include <ctime>
@@ -51,10 +52,11 @@ string segDescription[MAX_SEGMENTS];
 int    segmentCount = 0;
 
 // --- Player State ---
+const int MAX_BATTERY = 15;
 string playerName;
 int    playerHP;
 int    playerMaxHP    = 100;
-int    battery        = 15;
+int    battery        = MAX_BATTERY;
 int    currentSegment = 0;
 int    playerXP       = 0;
 
@@ -82,6 +84,45 @@ void splitLine(string line, string tokens[], int maxTokens, int &count) {
     }
 }
 
+bool tryParseInt(const string &text, int &value) {
+    try {
+        size_t pos = 0;
+        value = stoi(text, &pos);
+        return pos == text.length();
+    } catch (...) {
+        return false;
+    }
+}
+
+void warnBadDataRow(const string &filename, int lineNumber, const string &line) {
+    cout << "WARNING: Skipping bad data in " << filename
+         << " at line " << lineNumber << ": " << line << endl;
+}
+
+int readIntChoice(const string &prompt) {
+    int choice;
+    while (true) {
+        cout << prompt;
+        if (cin >> choice) {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return choice;
+        }
+
+        cout << "  Invalid choice." << endl;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+}
+
+bool readSaveInt(ifstream &fin, const string &fieldName, int &value) {
+    string line;
+    if (!getline(fin, line) || !tryParseInt(line, value)) {
+        cout << "  ERROR: Save file has invalid " << fieldName << "." << endl;
+        return false;
+    }
+    return true;
+}
+
 // ============================================================
 // DATA LOADING
 // ============================================================
@@ -94,18 +135,28 @@ bool loadEnemies(string filename) {
     }
     enemyCount = 0;
     string line;
+    int lineNumber = 0;
     while (getline(fin, line) && enemyCount < MAX_ENEMIES) {
+        lineNumber++;
         if (line.length() == 0) continue;
         string tokens[4];
         int tokenCount = 0;
+        int hp = 0;
+        int damage = 0;
+        int xp = 0;
         splitLine(line, tokens, 4, tokenCount);
-        if (tokenCount == 4) {
-            enemyName[enemyCount]   = tokens[0];
-            enemyHP[enemyCount]     = stoi(tokens[1]);
-            enemyDamage[enemyCount] = stoi(tokens[2]);
-            enemyXP[enemyCount]     = stoi(tokens[3]);
-            enemyCount++;
+        if (tokenCount != 4 ||
+            !tryParseInt(tokens[1], hp) ||
+            !tryParseInt(tokens[2], damage) ||
+            !tryParseInt(tokens[3], xp)) {
+            warnBadDataRow(filename, lineNumber, line);
+            continue;
         }
+        enemyName[enemyCount]   = tokens[0];
+        enemyHP[enemyCount]     = hp;
+        enemyDamage[enemyCount] = damage;
+        enemyXP[enemyCount]     = xp;
+        enemyCount++;
     }
     fin.close();
     cout << "  Loaded " << enemyCount << " enemies." << endl;
@@ -120,17 +171,22 @@ bool loadLoot(string filename) {
     }
     lootCount = 0;
     string line;
+    int lineNumber = 0;
     while (getline(fin, line) && lootCount < MAX_LOOT) {
+        lineNumber++;
         if (line.length() == 0) continue;
         string tokens[3];
         int tokenCount = 0;
+        int value = 0;
         splitLine(line, tokens, 3, tokenCount);
-        if (tokenCount == 3) {
-            lootName[lootCount]  = tokens[0];
-            lootType[lootCount]  = tokens[1];
-            lootValue[lootCount] = stoi(tokens[2]);
-            lootCount++;
+        if (tokenCount != 3 || !tryParseInt(tokens[2], value)) {
+            warnBadDataRow(filename, lineNumber, line);
+            continue;
         }
+        lootName[lootCount]  = tokens[0];
+        lootType[lootCount]  = tokens[1];
+        lootValue[lootCount] = value;
+        lootCount++;
     }
     fin.close();
     cout << "  Loaded " << lootCount << " loot items." << endl;
@@ -145,28 +201,42 @@ bool loadAlley(string filename) {
     }
     segmentCount = 0;
     string line;
+    int lineNumber = 0;
     while (getline(fin, line) && segmentCount < MAX_SEGMENTS) {
+        lineNumber++;
         if (line.length() == 0) continue;
         string tokens[4];
         int tokenCount = 0;
+        int value = 0;
         splitLine(line, tokens, 4, tokenCount);
 
-        if (tokenCount >= 3) {
-            segType[segmentCount] = tokens[0];
-
-            if (tokens[0] == "event") {
-                // event|stat|value|description
-                segExtra[segmentCount]       = tokens[1];
-                segIndex[segmentCount]        = stoi(tokens[2]);
-                segDescription[segmentCount]  = (tokenCount >= 4) ? tokens[3] : "";
-            } else {
-                // enemy|index|description  or  loot|index|description  or  finish|index|description
-                segIndex[segmentCount]       = stoi(tokens[1]);
-                segDescription[segmentCount] = tokens[2];
-                segExtra[segmentCount]       = "";
-            }
-            segmentCount++;
+        if (tokenCount < 3) {
+            warnBadDataRow(filename, lineNumber, line);
+            continue;
         }
+
+        segType[segmentCount] = tokens[0];
+
+        if (tokens[0] == "event") {
+            // event|stat|value|description
+            if (tokenCount < 4 || !tryParseInt(tokens[2], value)) {
+                warnBadDataRow(filename, lineNumber, line);
+                continue;
+            }
+            segExtra[segmentCount]      = tokens[1];
+            segIndex[segmentCount]      = value;
+            segDescription[segmentCount] = tokens[3];
+        } else {
+            // enemy|index|description  or  loot|index|description  or  finish|index|description
+            if (!tryParseInt(tokens[1], value)) {
+                warnBadDataRow(filename, lineNumber, line);
+                continue;
+            }
+            segIndex[segmentCount]       = value;
+            segDescription[segmentCount] = tokens[2];
+            segExtra[segmentCount]       = "";
+        }
+        segmentCount++;
     }
     fin.close();
     cout << "  Loaded " << segmentCount << " alley segments." << endl;
@@ -211,18 +281,69 @@ bool loadGame(string filename) {
         fin.close();
         return false;
     }
-    getline(fin, playerName);
+    string loadedPlayerName;
+    int loadedPlayerHP = 0;
+    int loadedPlayerMaxHP = 0;
+    int loadedBattery = 0;
+    int loadedCurrentSegment = 0;
+    int loadedPlayerXP = 0;
+    int savedInventoryCount = 0;
+    int loadedInventoryCount = 0;
+    string loadedInventory[MAX_INVENTORY];
 
-    string temp;
-    getline(fin, temp); playerHP       = stoi(temp);
-    getline(fin, temp); playerMaxHP    = stoi(temp);
-    getline(fin, temp); battery        = stoi(temp);
-    getline(fin, temp); currentSegment = stoi(temp);
-    getline(fin, temp); playerXP       = stoi(temp);
-    getline(fin, temp); inventoryCount = stoi(temp);
+    if (!getline(fin, loadedPlayerName)) {
+        cout << "  ERROR: Save file is missing player name." << endl;
+        return false;
+    }
+    if (!readSaveInt(fin, "player HP", loadedPlayerHP)) return false;
+    if (!readSaveInt(fin, "player max HP", loadedPlayerMaxHP)) return false;
+    if (!readSaveInt(fin, "battery", loadedBattery)) return false;
+    if (!readSaveInt(fin, "current segment", loadedCurrentSegment)) return false;
+    if (!readSaveInt(fin, "player XP", loadedPlayerXP)) return false;
+    if (!readSaveInt(fin, "inventory count", savedInventoryCount)) return false;
 
-    for (int i = 0; i < inventoryCount && i < MAX_INVENTORY; i++) {
-        getline(fin, inventory[i]);
+    if (loadedCurrentSegment < 0 || loadedCurrentSegment > segmentCount) {
+        cout << "  ERROR: Save file has invalid current segment." << endl;
+        return false;
+    }
+    if (loadedPlayerMaxHP < 1) {
+        cout << "  ERROR: Save file has invalid max HP." << endl;
+        return false;
+    }
+    if (loadedPlayerHP < 0 || loadedPlayerHP > loadedPlayerMaxHP) {
+        cout << "  ERROR: Save file has invalid current HP." << endl;
+        return false;
+    }
+    if (loadedBattery < 0) {
+        cout << "  ERROR: Save file has invalid battery level." << endl;
+        return false;
+    }
+
+    int inventoryLinesToRead = savedInventoryCount;
+    if (inventoryLinesToRead < 0) inventoryLinesToRead = 0;
+    loadedInventoryCount = inventoryLinesToRead;
+    if (loadedInventoryCount > MAX_INVENTORY) loadedInventoryCount = MAX_INVENTORY;
+
+    for (int i = 0; i < inventoryLinesToRead; i++) {
+        string itemName;
+        if (!getline(fin, itemName)) {
+            cout << "  ERROR: Save file is missing inventory data." << endl;
+            return false;
+        }
+        if (i < MAX_INVENTORY) {
+            loadedInventory[i] = itemName;
+        }
+    }
+
+    playerName = loadedPlayerName;
+    playerHP = loadedPlayerHP;
+    playerMaxHP = loadedPlayerMaxHP;
+    battery = loadedBattery;
+    currentSegment = loadedCurrentSegment;
+    playerXP = loadedPlayerXP;
+    inventoryCount = loadedInventoryCount;
+    for (int i = 0; i < MAX_INVENTORY; i++) {
+        inventory[i] = (i < inventoryCount) ? loadedInventory[i] : "";
     }
     fin.close();
     cout << "\n  >> Run restored. Welcome back, " << playerName << ".\n" << endl;
@@ -234,6 +355,7 @@ bool loadGame(string filename) {
 // ============================================================
 
 void displayHPBar(string label, int current, int maximum) {
+    if (maximum <= 0) maximum = 1;
     int barWidth = 10;
     int filled = (current * barWidth) / maximum;
     if (filled < 0) filled = 0;
@@ -253,7 +375,7 @@ void displayStatus() {
     cout << "\n=== SEGMENT " << (currentSegment + 1) << " of " << segmentCount << " ===" << endl;
     cout << "Battery: [";
     int batBar = 10;
-    int batFill = (battery * batBar) / 15;
+    int batFill = (battery * batBar) / MAX_BATTERY;
     if (batFill < 0) batFill = 0;
     if (batFill > batBar) batFill = batBar;
     for (int i = 0; i < batBar; i++) {
@@ -305,9 +427,7 @@ int useItem() {
         return 0;
     }
     showInventory();
-    cout << "  Use which item? (0 = cancel): ";
-    int choice;
-    cin >> choice;
+    int choice = readIntChoice("  Use which item? (0 = cancel): ");
 
     if (choice < 1 || choice > inventoryCount) {
         cout << "  Cancelled." << endl;
@@ -371,9 +491,7 @@ bool combat(int enemyIdx) {
         cout << "  1. Attack" << endl;
         cout << "  2. Use Item (" << inventoryCount << " items)" << endl;
         cout << "  3. Try to Flee" << endl;
-        cout << "> ";
-        int choice;
-        cin >> choice;
+        int choice = readIntChoice("> ");
 
         if (choice == 1) {
             // Player attacks
@@ -565,7 +683,7 @@ void newRun() {
     cout << "\nEnter drone callsign: ";
     getline(cin >> ws, playerName);
     playerHP       = playerMaxHP;
-    battery        = 15;
+    battery        = MAX_BATTERY;
     currentSegment = 0;
     playerXP       = 0;
     inventoryCount = 0;
@@ -610,11 +728,7 @@ int showMainMenu() {
     cout << "  3. How to Play" << endl;
     cout << "  4. Quit" << endl;
     cout << "======================================" << endl;
-    cout << "> ";
-
-    int choice;
-    cin >> choice;
-    return choice;
+    return readIntChoice("> ");
 }
 
 // ============================================================
