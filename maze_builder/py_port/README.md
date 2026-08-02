@@ -50,24 +50,9 @@ python run_maze.py --renderer asciimatics
 
 ## Project Structure
 
-- `cell.py` - Cell class representing a single cell in the maze
-- `grid.py` - Grid class containing a 2D collection of cells (with save/load support)
-- `run_maze.py` - Unified command-line interface
-- `interactive_maze.py` - Interactive maze explorer
-- `algorithms/` - Maze generation algorithms
-  - `binary_tree.py` - Binary Tree algorithm implementation
-  - `sidewinder.py` - Sidewinder algorithm implementation
-  - `aldous_broder.py` - Aldous-Broder algorithm implementation
-- `pathfinding/` - Pathfinding algorithms
-  - `distances.py` - Distance calculation utilities
-  - `dijkstra.py` - Dijkstra's algorithm implementation
-- `visualization/` - Rendering and theme system
-  - `renderer_base.py` - Base renderer interface
-  - `text_renderer.py` - Console ASCII renderer
-  - `matplotlib_renderer.py` - Graphical renderer
-  - `asciimatics_renderer.py` - Interactive terminal renderer
-  - `themes.py` - Visual theme definitions
-- `tests/` - Pytest test suite
+For the up-to-date authoritative folder map for this repository, see:
+
+- [`/FOLDER_MAP.md`](../../FOLDER_MAP.md)
 
 ## Save and Load Functionality
 
