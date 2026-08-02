@@ -1,0 +1,8 @@
+enemy|0|The alley narrows. Red sensor lights blink ahead.
+loot|2|A smashed vending machine sparks in the rain.
+enemy|1|A figure drops from a fire escape, blade drawn.
+event|battery|2|You find a dead courier drone. Its cells still hold charge.
+loot|0|Behind a dumpster: a dented medkit.
+enemy|3|Corporate enforcer blocks the intersection.
+enemy|4|Razorwire turret activates as you round the corner.
+finish|0|The data drop terminal glows at the dead end.

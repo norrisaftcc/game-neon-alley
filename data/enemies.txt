@@ -1,0 +1,5 @@
+Sentry Bot|30|8|15
+Street Samurai|45|12|25
+Junkyard Drone|20|5|10
+Corp Enforcer|50|15|30
+Razorwire Turret|35|10|20
